@@ -83,7 +83,7 @@ func MakeInt64(deP interface{}) (int64, error) {
 	return val, nil
 }
 
-func makeInt32(deP interface{}) int32 {
+func MakeInt32(deP interface{}) (int32, error) {
 	var val int32
 	switch v := deP.(type) {
 	case nil:
@@ -99,10 +99,10 @@ func makeInt32(deP interface{}) int32 {
 	case float64:
 		val = int32(v)
 	}
-	return val
+	return val, nil
 }
 
-func makeFloat64(deP interface{}) float64 {
+func MakeFloat64(deP interface{}) (float64, error){
 	var val float64
 	switch v := deP.(type) {
 	case nil:
@@ -120,30 +120,30 @@ func makeFloat64(deP interface{}) float64 {
 	case string:
 		tmp, err := strconv.ParseFloat(v, 64)
 		if err != nil {
-			fmt.Println("Erreur conversion string => float", v)
-
+			return 0, err
 		}
 		val = tmp
 	}
 
-	return val
+	return val, nil
 
 }
 
-func sendMail(to string, sub string, msg string) {
+func SendMailLocalhost(to string, from string, sub string, msg string) error{
 	//fmt.Println("Sending mail", to, sub, msg)
+
 	c, err := smtp.Dial("localhost:25")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer c.Close()
 	// Set the sender and recipient.
-	c.Mail("admin@a-of")
+	c.Mail(from)
 	c.Rcpt(to)
 	// Send the email body.
 	wc, err := c.Data()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	fullMessage := strings.Replace("To: {to}\r\n", "{to}", to, 1)
 	fullMessage += strings.Replace("Subject: {sub}\r\n", "{sub}", sub, 1)
@@ -152,28 +152,12 @@ func sendMail(to string, sub string, msg string) {
 	defer wc.Close()
 	buf := bytes.NewBufferString(fullMessage)
 	if _, err = buf.WriteTo(wc); err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
 
-func trans(s string, vars ...string) string {
-	return s
-}
-
-func parseFeed(xml string) *gofeed.Feed {
-	fp := gofeed.NewParser()
-	feed, _ := fp.ParseURL(xml)
-	return feed
-
-	//func getFeed() *gofeed.Feed {
-	//	xml := "https://www.pressherald.com/category/business/feed/"
-	//
-	//
-	//	// fmt.Printf("%+v\n", feed)
-	//
-	//}
-}
-func inSlice(n string, l []string) bool {
+func InSlice(n string, l []string) bool {
 	for _, s := range l {
 		if s == n {
 			return true
@@ -181,7 +165,7 @@ func inSlice(n string, l []string) bool {
 	}
 	return false
 }
-func cleanString(s string, accent, chars bool) string {
+func CleanString(s string, accent, chars bool) string {
 	newS := s
 	if accent {
 		newS = removeAccents(newS)
@@ -192,7 +176,7 @@ func cleanString(s string, accent, chars bool) string {
 	return newS
 
 }
-func removeAccents(s string) string {
+func RemoveAccents(s string) string {
 	t := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
 	output, _, e := transform.String(t, s)
 	if e != nil {
@@ -201,7 +185,7 @@ func removeAccents(s string) string {
 	return output
 }
 
-func removeSpecialChars(s string) string {
+func RemoveSpecialChars(s string) string {
 	repl := strings.NewReplacer("#", "", "@", "", "!", "$", "", "%", "", "^", "", "&", "",
 		"*", "", "(", "", ")", " ", "_", ":", "", "[", "", "]", "", "{", "", "}", "", "\\", "", "|", "",
 		";", "", "'", "", `"`, "", "?", "", ">", "", "<", "", ",", "", "=", "", "+", "", "`", "", "~", "", ".", "",
@@ -210,7 +194,7 @@ func removeSpecialChars(s string) string {
 	return newS
 
 }
-func genShittyPasswd() string {
+func GenPasswordALaCon() string {
 	rand.Seed(time.Now().UnixNano())
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäöéèÉÈàÀêÊ!@#$%&*=-?()0123456789")
 	length := 24
@@ -220,7 +204,7 @@ func genShittyPasswd() string {
 	}
 	return b.String()
 }
-func getIP(r *http.Request) string {
+func GetIP(r *http.Request) string {
 	IPAddress := r.Header.Get("X-Real-Ip")
 	if IPAddress == "" {
 		IPAddress = r.Header.Get("X-Forwarded-For")
@@ -231,20 +215,3 @@ func getIP(r *http.Request) string {
 	return IPAddress
 }
 
-//
-
-func genClientBsonLink(cli bson.M) string {
-	s := ` <a href="/lead-detail/{mid}" target="_blank">{nomCli}</a>`
-	mID := cli["_id"].(primitive.ObjectID)
-	nom := cli["nom"].(string)
-	if _, ok := cli["prenom"].(string); ok {
-		nom += " " + cli["prenom"].(string)
-	}
-	nom = strings.TrimSpace(nom)
-	m := mID.Hex()
-	np := nom
-	np = strings.TrimSpace(np)
-	r := strings.NewReplacer("{mid}", m, "{nomCli}", np)
-	s = r.Replace(s)
-	return s
-}
