@@ -1,4 +1,4 @@
-package go_tools
+package gotools
 
 import (
 	"bytes"
