@@ -23,12 +23,13 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-type resultS struct {
-	Code int `json:"code"`
-	Msg  string `json:"msg"`
-	Data  interface{} `json:"data"`
+type ResultS struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
 }
-func returnRes(res resultS, code int) {
+
+func ReturnRes(res ResultS, code int) {
 	jRes, _ := json.Marshal(res)
 	fmt.Println(string(jRes))
 	os.Exit(code)
@@ -125,8 +126,6 @@ func makeFloat64(deP interface{}) float64 {
 
 }
 
-
-
 func sendMail(to string, sub string, msg string) {
 	//fmt.Println("Sending mail", to, sub, msg)
 	c, err := smtp.Dial("localhost:25")
@@ -201,13 +200,13 @@ func removeAccents(s string) string {
 func removeSpecialChars(s string) string {
 	repl := strings.NewReplacer("#", "", "@", "", "!", "$", "", "%", "", "^", "", "&", "",
 		"*", "", "(", "", ")", " ", "_", ":", "", "[", "", "]", "", "{", "", "}", "", "\\", "", "|", "",
-		";", "", "'", "", `"`, "", "?", "", ">", "", "<", "", ",", "", "=", "", "+", "", "`", "", "~", "",".", "",
+		";", "", "'", "", `"`, "", "?", "", ">", "", "<", "", ",", "", "=", "", "+", "", "`", "", "~", "", ".", "",
 	)
 	newS := repl.Replace(s)
 	return newS
 
 }
-func genShittyPasswd() string{
+func genShittyPasswd() string {
 	rand.Seed(time.Now().UnixNano())
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäöéèÉÈàÀêÊ!@#$%&*=-?()0123456789")
 	length := 24
@@ -229,7 +228,6 @@ func getIP(r *http.Request) string {
 }
 
 //
-
 
 func genClientBsonLink(cli bson.M) string {
 	s := ` <a href="/lead-detail/{mid}" target="_blank">{nomCli}</a>`
