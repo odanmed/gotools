@@ -3,7 +3,7 @@ package gotools
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
+
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -38,7 +38,7 @@ func ReturnRes(res ResultS, code int) {
 
 func MakeInt(deP interface{}) (int, error) {
 	var val int
-	err := errors.New("")
+	
 	switch v := deP.(type) {
 	case nil:
 		val = 0
@@ -54,15 +54,17 @@ func MakeInt(deP interface{}) (int, error) {
 		val = int(v)
 	case string:
 		val2, errC := strconv.Atoi(v)
-		err = errC
+		if errC != nil {
+			return 0, errC
+		}
 		val = val2
 
 	}
 
-	return val, err
+	return val, nil
 }
 func MakeInt64(deP interface{}) (int64, error) {
-	err := errors.New("")
+	
 	var val int64
 	switch v := deP.(type) {
 	case nil:
@@ -78,7 +80,7 @@ func MakeInt64(deP interface{}) (int64, error) {
 	case float64:
 		val = int64(v)
 	}
-	return val, err
+	return val, nil
 }
 
 func makeInt32(deP interface{}) int32 {
