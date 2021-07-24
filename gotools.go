@@ -33,6 +33,7 @@ func ReturnRes(res ResultS, code int) {
 	jRes, _ := json.Marshal(res)
 	fmt.Println(string(jRes))
 	os.Exit(code)
+
 }
 
 func MakeInt(deP interface{}) (int, error) {
@@ -60,7 +61,8 @@ func MakeInt(deP interface{}) (int, error) {
 
 	return val, err
 }
-func makeInt64(deP interface{}) int64 {
+func MakeInt64(deP interface{}) (int64, error) {
+	err := errors.New("")
 	var val int64
 	switch v := deP.(type) {
 	case nil:
@@ -76,7 +78,7 @@ func makeInt64(deP interface{}) int64 {
 	case float64:
 		val = int64(v)
 	}
-	return val
+	return val, err
 }
 
 func makeInt32(deP interface{}) int32 {
