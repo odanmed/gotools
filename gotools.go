@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
 	"math/rand"
 	"net/http"
 	"net/smtp"
@@ -15,12 +16,6 @@ import (
 	"strings"
 	"time"
 	"unicode"
-
-	"github.com/labstack/gommon/log"
-	"github.com/mmcdole/gofeed"
-	"golang.org/x/text/runes"
-	"golang.org/x/text/transform"
-	"golang.org/x/text/unicode/norm"
 )
 
 type ResultS struct {
@@ -168,10 +163,10 @@ func InSlice(n string, l []string) bool {
 func CleanString(s string, accent, chars bool) string {
 	newS := s
 	if accent {
-		newS = removeAccents(newS)
+		newS = RemoveAccents(newS)
 	}
 	if chars {
-		newS = removeSpecialChars(newS)
+		newS = RemoveSpecialChars(newS)
 	}
 	return newS
 
