@@ -133,8 +133,14 @@ func SendMailLocalhost(to string, from string, sub string, msg string) error {
 	}
 	defer c.Close()
 	// Set the sender and recipient.
-	c.Mail(from)
-	c.Rcpt(to)
+	err = c.Mail(from)
+	if err != nil {
+		return err
+	}
+	err = c.Rcpt(to)
+	if err != nil {
+		return err
+	}
 	// Send the email body.
 	wc, err := c.Data()
 	if err != nil {
