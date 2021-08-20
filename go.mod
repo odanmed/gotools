@@ -1,4 +1,4 @@
-module github.com/odanmed/gotools
+module github.com/odanmed/gotools/v2
 
 go 1.16
 
