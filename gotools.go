@@ -33,7 +33,7 @@ func ReturnRes(res ResultS, code int) {
 
 func MakeInt(deP interface{}) (int, error) {
 	var val int
-	
+
 	switch v := deP.(type) {
 	case nil:
 		val = 0
@@ -59,7 +59,7 @@ func MakeInt(deP interface{}) (int, error) {
 	return val, nil
 }
 func MakeInt64(deP interface{}) (int64, error) {
-	
+
 	var val int64
 	switch v := deP.(type) {
 	case nil:
@@ -69,7 +69,7 @@ func MakeInt64(deP interface{}) (int64, error) {
 	case int32:
 		val = int64(v)
 	case int64:
-		val = int64(v)
+		val = v
 	case float32:
 		val = int64(v)
 	case float64:
@@ -86,7 +86,7 @@ func MakeInt32(deP interface{}) (int32, error) {
 	case int:
 		val = int32(v)
 	case int32:
-		val = int32(v)
+		val = v
 	case int64:
 		val = int32(v)
 	case float32:
@@ -97,11 +97,11 @@ func MakeInt32(deP interface{}) (int32, error) {
 	return val, nil
 }
 
-func MakeFloat64(deP interface{}) (float64, error){
+func MakeFloat64(deP interface{}) (float64, error) {
 	var val float64
 	switch v := deP.(type) {
 	case nil:
-		val = float64(0.0)
+		val = 0.0
 	case int:
 		val = float64(v)
 	case int32:
@@ -124,7 +124,7 @@ func MakeFloat64(deP interface{}) (float64, error){
 
 }
 
-func SendMailLocalhost(to string, from string, sub string, msg string) error{
+func SendMailLocalhost(to string, from string, sub string, msg string) error {
 	//fmt.Println("Sending mail", to, sub, msg)
 
 	c, err := smtp.Dial("localhost:25")
@@ -151,8 +151,15 @@ func SendMailLocalhost(to string, from string, sub string, msg string) error{
 	}
 	return nil
 }
-
 func InSlice(n string, l []string) bool {
+	for _, s := range l {
+		if s == n {
+			return true
+		}
+	}
+	return false
+}
+func InIntSlice(n int, l []int) bool {
 	for _, s := range l {
 		if s == n {
 			return true
@@ -209,4 +216,3 @@ func GetIP(r *http.Request) string {
 	}
 	return IPAddress
 }
-
