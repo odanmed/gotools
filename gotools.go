@@ -148,8 +148,8 @@ func SendHtmlMailLocalhost(to string, from string, sub string, msg string) error
 	fullMessage := strings.Replace("To: {to}\r\n", "{to}", to, 1)
 	fullMessage += strings.Replace("Subject: {sub}\r\n", "{sub}", sub, 1)
 	fullMessage += `Mime-Version: 1.0;` + "\r\n"
-	fullMessage += `Content-Type: text/html; charset="utf-8";` + "\r\n"
-	fullMessage += `Content-Transfer-Encoding: 7bit;`
+	fullMessage += `Content-Type: text/html; charset="UTF-8";` + "\r\n"
+	//fullMessage += `Content-Transfer-Encoding: 7bit;`
 	fullMessage += "\r\n<html><body>" + msg + "</body></html>\r\n"
 
 	defer wc.Close()
