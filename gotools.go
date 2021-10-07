@@ -123,8 +123,7 @@ func MakeFloat64(deP interface{}) (float64, error) {
 	return val, nil
 
 }
-
-func SendMailLocalhost(to string, from string, sub string, msg string) error {
+func SendHtmlMailLocalhost(to string, from string, sub string, msg string) error {
 	//fmt.Println("Sending mail", to, sub, msg)
 
 	c, err := smtp.Dial("localhost:25")
@@ -152,6 +151,40 @@ func SendMailLocalhost(to string, from string, sub string, msg string) error {
 	fullMessage += `Content-Type: text/html; charset="utf-8";`
 	fullMessage += `Content-Transfer-Encoding: 7bit;`
 	fullMessage += "\r\n<html><body>" + msg + "</body></html>\r\n"
+
+	defer wc.Close()
+	buf := bytes.NewBufferString(fullMessage)
+	if _, err = buf.WriteTo(wc); err != nil {
+		return err
+	}
+	return nil
+}
+func SendTextMailLocalhost(to string, from string, sub string, msg string) error {
+	//fmt.Println("Sending mail", to, sub, msg)
+
+	c, err := smtp.Dial("localhost:25")
+	if err != nil {
+		return err
+	}
+	defer c.Close()
+	// Set the sender and recipient.
+	err = c.Mail(from)
+	if err != nil {
+		return err
+	}
+	err = c.Rcpt(to)
+	if err != nil {
+		return err
+	}
+	// Send the email body.
+	wc, err := c.Data()
+	if err != nil {
+		return err
+	}
+	fullMessage := strings.Replace("To: {to}\r\n", "{to}", to, 1)
+	fullMessage += strings.Replace("Subject: {sub}\r\n", "{sub}", sub, 1)
+
+	fullMessage += "\r\n" + msg + "\r\n"
 
 	defer wc.Close()
 	buf := bytes.NewBufferString(fullMessage)
