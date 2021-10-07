@@ -148,6 +148,7 @@ func SendMailLocalhost(to string, from string, sub string, msg string) error {
 	}
 	fullMessage := strings.Replace("To: {to}\r\n", "{to}", to, 1)
 	fullMessage += strings.Replace("Subject: {sub}\r\n", "{sub}", sub, 1)
+	fullMessage += `Content-Type: text/html; charset="utf-8";`
 	fullMessage += "\r\n" + msg + "\r\n"
 
 	defer wc.Close()
